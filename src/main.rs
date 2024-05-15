@@ -1,6 +1,8 @@
 #![allow(unused_variables)]
+#![allow(unused_imports)]
 
-use cpal::traits::HostTrait;
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use cpal::Data;
 use cpal::Device;
 use cpal::Host;
 use cpal::StreamConfig;
@@ -19,4 +21,15 @@ fn main() {
         sample_rate: cpal::SampleRate(SAMPLE_RATE),
         buffer_size: cpal::BufferSize::Default,
     };
+
+    let stream = device.build_output_stream(
+        &stream_config,
+        move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+            // react to stream events and read or write stream data here.
+        },
+        move |err| {
+            // react to errors here.
+        },
+        None, // None=blocking, Some(Duration)=timeout
+    );
 }
