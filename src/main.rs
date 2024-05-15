@@ -1,6 +1,7 @@
 #![allow(unused_variables)]
 
 use cpal::traits::HostTrait;
+use cpal::Device;
 use cpal::Host;
 use cpal::StreamConfig;
 
@@ -9,7 +10,7 @@ const SAMPLE_RATE: u32 = 44_100;
 
 fn main() {
     let host: Host = cpal::default_host();
-    let device = host
+    let device: Device = host
         .default_output_device()
         .expect("no output device available");
 
