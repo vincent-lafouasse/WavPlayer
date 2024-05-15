@@ -1,11 +1,21 @@
 #![allow(unused_variables)]
 
-use cpal::Host;
 use cpal::traits::HostTrait;
+use cpal::Host;
+use cpal::StreamConfig;
+
+const SAMPLE_RATE: u32 = 44_100;
+//const SAMPLE_FORMAT: cpal::SampleFormat = cpal::SampleFormat::F32;
 
 fn main() {
     let host: Host = cpal::default_host();
-    let device = host.default_output_device().expect("no output device available");
+    let device = host
+        .default_output_device()
+        .expect("no output device available");
 
-    println!("Hello, world!");
+    let stream_config = StreamConfig {
+        channels: 1,
+        sample_rate: cpal::SampleRate(SAMPLE_RATE),
+        buffer_size: cpal::BufferSize::Default,
+    };
 }
