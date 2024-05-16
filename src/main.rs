@@ -22,7 +22,10 @@ fn main() {
         sample_format => panic!("Unsupported sample format '{sample_format}'"),
     }
     .expect("Failed to create output stream");
+
     stream.play().unwrap();
+    std::thread::sleep(std::time::Duration::from_millis(2000));
+    // keep main thread alive while audio thread is running
 }
 
 fn audio_callback<T: cpal::Sample>(data: &mut [T], callback_info: &cpal::OutputCallbackInfo) {
