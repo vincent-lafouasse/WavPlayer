@@ -6,16 +6,17 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::Data;
 use cpal::Device;
 use cpal::Host;
+use cpal::SampleFormat;
 use cpal::SupportedStreamConfig;
 
 fn main() {
     let (_host, device, config) = setup_device().unwrap();
     let err_fn = |err| eprintln!("an error occurred on the output audio stream: {}", err);
     let stream = match config.sample_format() {
-        cpal::SampleFormat::F32 => {
+        SampleFormat::F32 => {
             device.build_output_stream(&config.config(), audio_callback::<f32>, err_fn, None)
         }
-        cpal::SampleFormat::U32 => {
+        SampleFormat::U32 => {
             device.build_output_stream(&config.config(), audio_callback::<u32>, err_fn, None)
         }
         sample_format => panic!("Unsupported sample format '{sample_format}'"),
