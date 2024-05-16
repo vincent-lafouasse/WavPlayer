@@ -1,8 +1,6 @@
 #![allow(unused_variables)]
-#![allow(unused_imports)]
 
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use cpal::Data;
+use cpal::traits::{DeviceTrait, HostTrait};
 use cpal::Device;
 use cpal::Host;
 use cpal::StreamConfig;
