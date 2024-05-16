@@ -20,12 +20,12 @@ fn main() {
 
     let file: BufReader<File> =
         BufReader::new(File::open(MP3_PATH).expect("couldnt open audio file"));
-    print_type_of(&file);
-
-    // anything with the Source trait
     let source: Decoder<BufReader<File>> = Decoder::new(file).expect("couldnt decode audio file");
 
+    // feed anything with the Source trait
+    // give up ownership of source to background thread
     let _ = stream_handle.play_raw(source.convert_samples());
+    // keep main thread alive while background thread runs
     std::thread::sleep(std::time::Duration::from_secs(10));
 }
 
