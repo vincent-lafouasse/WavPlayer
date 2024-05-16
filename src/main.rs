@@ -20,7 +20,9 @@ fn main() {
             device.build_output_stream(&config.config(), audio_callback::<u32>, err_fn, None)
         }
         sample_format => panic!("Unsupported sample format '{sample_format}'"),
-    };
+    }
+    .expect("Failed to create output stream");
+    stream.play().unwrap();
 }
 
 fn audio_callback<T: cpal::Sample>(data: &mut [T], callback_info: &cpal::OutputCallbackInfo) {
