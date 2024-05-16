@@ -16,5 +16,11 @@ fn main() {
     let (_stream, stream_handle): (OutputStream, OutputStreamHandle) =
         OutputStream::try_default().expect("couldnt open a stream");
 
-    let file = BufReader::new(File::open(MP3_PATH).expect("couldnt open audio file"));
+    let file: BufReader<File> =
+        BufReader::new(File::open(MP3_PATH).expect("couldnt open audio file"));
+    print_type_of(&file);
+}
+
+fn print_type_of<T>(_: &T) {
+    println!("{}", std::any::type_name::<T>())
 }
