@@ -10,16 +10,22 @@ use cpal::SupportedStreamConfig;
 
 fn main() {
     let (_host, device, config) = setup_device().unwrap();
-    let stream = device.build_output_stream(
-        &config.config(),
-        move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
-            // react to stream events and read or write stream data here.
-        },
-        move |err| {
-            // react to errors here.
-        },
-        None, // None=blocking, Some(Duration)=timeout
-    );
+    let err_fn = |err| eprintln!("an error occurred on the output audio stream: {}", err);
+    let stream = match config.sample_format() {
+        cpal::SampleFormat::F32 => {
+            device.build_output_stream(&config.config(), audio_callback::<f32>, err_fn, None)
+        }
+        cpal::SampleFormat::U32 => {
+            device.build_output_stream(&config.config(), audio_callback::<u32>, err_fn, None)
+        }
+        sample_format => panic!("Unsupported sample format '{sample_format}'"),
+    };
+}
+
+fn audio_callback<T: cpal::Sample>(data: &mut [T], callback_info: &cpal::OutputCallbackInfo) {
+    for sample in data.iter_mut() {
+        *sample = cpal::Sample::EQUILIBRIUM;
+    }
 }
 
 fn setup_device() -> Result<(Host, Device, SupportedStreamConfig), &'static str> {
