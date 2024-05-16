@@ -5,8 +5,10 @@
 use std::fs::File;
 use std::io::BufReader;
 
+use rodio::Decoder;
 use rodio::OutputStream;
 use rodio::OutputStreamHandle;
+use rodio::Source;
 
 const SAMPLE_RATE: u32 = 44_100;
 
@@ -19,6 +21,12 @@ fn main() {
     let file: BufReader<File> =
         BufReader::new(File::open(MP3_PATH).expect("couldnt open audio file"));
     print_type_of(&file);
+
+    // anything with the Source trait
+    let source: Decoder<BufReader<File>> = Decoder::new(file).expect("couldnt decode audio file");
+
+    let _ = stream_handle.play_raw(source.convert_samples());
+    std::thread::sleep(std::time::Duration::from_secs(10));
 }
 
 fn print_type_of<T>(_: &T) {
