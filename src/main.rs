@@ -11,7 +11,7 @@ use cpal::SupportedStreamConfig;
 fn main() {
     let (_host, device, config) = setup_device().unwrap();
     let stream = device.build_output_stream(
-        &config.into(),
+        &config.config(),
         move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
             // react to stream events and read or write stream data here.
         },
