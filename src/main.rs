@@ -1,32 +1,38 @@
-#![allow(dead_code)]
 #![allow(unused_variables)]
 #![allow(unused_imports)]
+#![allow(dead_code)]
 
-use std::fs::File;
-use std::io::BufReader;
-
-use rodio::Decoder;
-use rodio::OutputStream;
-use rodio::OutputStreamHandle;
-use rodio::Source;
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use cpal::Data;
+use cpal::Device;
+use cpal::Host;
+use cpal::StreamConfig;
 
 const SAMPLE_RATE: u32 = 44_100;
-
-const MP3_PATH: &str = "assets/pra_machucar_meu_coracao.mp3";
+//const SAMPLE_FORMAT: cpal::SampleFormat = cpal::SampleFormat::F32;
 
 fn main() {
-    let (_stream, stream_handle): (OutputStream, OutputStreamHandle) =
-        OutputStream::try_default().expect("couldnt open a stream");
+    let host: Host = cpal::default_host();
+    let device: Device = host
+        .default_output_device()
+        .expect("no output device available");
 
-    let file: BufReader<File> =
-        BufReader::new(File::open(MP3_PATH).expect("couldnt open audio file"));
-    let source: Decoder<BufReader<File>> = Decoder::new(file).expect("couldnt decode audio file");
+    let stream_config = StreamConfig {
+        channels: 1,
+        sample_rate: cpal::SampleRate(SAMPLE_RATE),
+        buffer_size: cpal::BufferSize::Default,
+    };
 
-    // feed anything with the Source trait
-    // give up ownership of source to background thread
-    let _ = stream_handle.play_raw(source.convert_samples());
-    // keep main thread alive while background thread runs
-    std::thread::sleep(std::time::Duration::from_secs(10));
+    let stream = device.build_output_stream(
+        &stream_config,
+        move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+            // react to stream events and read or write stream data here.
+        },
+        move |err| {
+            // react to errors here.
+        },
+        None, // None=blocking, Some(Duration)=timeout
+    );
 }
 
 fn print_type_of<T>(_: &T) {
